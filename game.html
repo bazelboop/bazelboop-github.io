@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4dce9">
+    <title>Cats Vs Zombies</title>
+    <link rel="stylesheet" href="game.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="game.js"></script>
+</head>
+<body>
+    <main class="game-shell">
+        <header class="game-header">
+            <a class="back-link" href="index.html">Back to the other page</a>
+            <div class="game-title-row">
+                <img class="game-title-mascot game-title-mascot-cat" src="cat.png" alt="Cat">
+                <h1>Cats Vs Zombies</h1>
+                <img class="game-title-mascot game-title-mascot-zombie" src="zombie.png" alt="Zombie">
+            </div>
+        </header>
+
+        <section class="asset-panel" aria-labelledby="asset-heading" hidden>
+            <div class="asset-panel-heading">
+                <h2 id="asset-heading">Use your Blender models</h2>
+                <p>The map and player load automatically from <code>models/MAP.glb</code> and <code>models/pusheen.glb</code>. Choose a <code>.glb</code> file to replace the map or enemy.</p>
+            </div>
+            <div class="asset-pickers">
+                <label class="asset-picker">
+                    <span>Dungeon map</span>
+                    <input id="map-file" type="file" accept=".glb,model/gltf-binary">
+                    <small id="map-file-status">Loads from models/MAP.glb</small>
+                </label>
+                <label class="asset-picker">
+                    <span>Enemy</span>
+                    <input id="enemy-file" type="file" accept=".glb,model/gltf-binary">
+                    <small id="enemy-file-status">Loads zombies, Creepers, the Wither, and Wither Skeletons from enemies/</small>
+                </label>
+                <div class="asset-picker">
+                    <span>Player character</span>
+                    <small id="player-file-status">Loads from models/pusheen.glb</small>
+                </div>
+            </div>
+            <p class="asset-tip">Start with the pistol and 10000 Dabloons. The 700-Dabloon box awards a random weapon. Press 1-6 to equip weapons you own; duplicate box rewards cost Dabloons but do not unlock a weapon. Guns and thrown weapons use magazines and reserve ammo; press R to reload. Mobs have a 15% chance to drop ammo for a random weapon except the Toaster; walk over the ammo box to pick it up. Weapon shots use <code>weapons/bullet.glb</code>; adjust damage with each weapon's <code>damage</code> value and firing speed with its <code>fireRate</code> value (shots per second) in <code>WEAPON_DEFINITIONS</code> near the top of <code>game.js</code>. The shotgun fires a spread, and the shuriken is thrown when you shoot. Creepers prioritize the bomb near spawn; it has 150 health and takes 25 damage per blast. In Level 6, the bomb shield shop rises from near the bomb while gameplay pauses; after it appears, press E nearby to buy a blue shield for 1000 Dabloons. It absorbs Creeper blasts and has 125 health. Use the turret shop on a different side of the map to buy up to four turrets near the bomb. The shop is four times its original size. Turrets fire at nearby Creepers: normal turrets deal 0.2 damage at 8 shots per second; upgraded turrets deal 0.3 damage at 12 shots per second. Walk up to a turret and press E to add a crown for 1000 Dabloons; each turret can be upgraded once. The <code>turret shooting.mp3</code> sound loops while a Creeper is in range. Enemy clips named Walk and Attack (or similar) are selected automatically; the Creeper uses a procedural walk cycle until its animation is exported. Level 6 is the Wither boss fight; after a two-second delay, two Creepers spawn and target the bomb. One more spawns every two seconds, with no limit on how many can be alive, until the Wither is defeated. The Wither hovers, fires aimed projectiles that explode on impact, and summons up to four Wither Skeletons. Its hurt, idle, shoot, and death sounds load from <code>wither sound affects/</code>.</p>
+            <p class="asset-tip">Each defeated mob drops <code>mob drops/money.glb</code>; pick it up to receive 100 Dabloons.</p>
+            <p class="asset-tip">There is a 25-second break between rounds, with a countdown at the top during the final 5 seconds.</p>
+            <p class="asset-tip">Buy the Magnet at its for-sale sign for 400 Dabloons to attract mob drops automatically within 16 units.</p>
+            <p id="tree-file-status" class="asset-tip" aria-live="polite">Tree model loads automatically from models/tree.glb.</p>
+        </section>
+
+        <section class="game-frame" aria-label="3D dungeon game">
+            <div class="hud" aria-live="polite">
+                <span id="level-display">Level 1</span>
+                <span id="round-countdown" class="round-countdown" role="status" aria-atomic="true" hidden></span>
+                <div id="health-display" class="health-display" role="img" aria-label="Health 100 of 100; 5 of 5 hearts">
+                    <img class="health-heart" src="HUD/full heart.png" alt="">
+                    <img class="health-heart" src="HUD/full heart.png" alt="">
+                    <img class="health-heart" src="HUD/full heart.png" alt="">
+                    <img class="health-heart" src="HUD/full heart.png" alt="">
+                    <img class="health-heart" src="HUD/full heart.png" alt="">
+                </div>
+                <div id="bomb-shield-status" class="bomb-shield-status" aria-hidden="true" hidden>
+                    <img class="bomb-shield-icon" src="HUD/full shield.png" alt="">
+                    <img class="bomb-shield-icon" src="HUD/full shield.png" alt="">
+                    <img class="bomb-shield-icon" src="HUD/full shield.png" alt="">
+                    <img class="bomb-shield-icon" src="HUD/full shield.png" alt="">
+                    <img class="bomb-shield-icon" src="HUD/full shield.png" alt="">
+                </div>
+                <div id="bomb-display" class="bomb-display" role="img" aria-label="Bomb health 150 of 150; 6 of 6 health icons remaining">
+                    <canvas id="bomb-health-canvas" width="180" height="42" aria-hidden="true"></canvas>
+                    <span id="bomb-health-fallback" hidden>Bomb 150/150</span>
+                </div>
+                <div id="dabloon-display" class="dabloon-display" role="img" aria-label="Dabloons 10000">
+                    <span id="dabloon-value">$10000</span>
+                </div>
+                <div id="ammo-display" class="ammo-display" role="img" aria-label="Ammo 12 in magazine, 36 in reserve">
+                    <img src="HUD/ammo hud.png" alt="" aria-hidden="true">
+                    <span id="ammo-value">12 / 36</span>
+                </div>
+            </div>
+            <aside class="weapon-preview" aria-label="Equipped weapon">
+                <span id="weapon-preview-name">Pistol</span>
+                <canvas id="weapon-preview-canvas" aria-hidden="true"></canvas>
+            </aside>
+            <div class="weapon-quick-select" id="weapon-quick-select"
+                role="list" aria-label="Unlocked weapons. Press the shown number key to equip a weapon."></div>
+            <div id="boss-display" class="boss-health-display" role="img"
+                aria-label="Wither health 100 of 100; 5 of 5 hearts" hidden>
+                <img class="wither-heart" src="HUD/wither heart full.png" alt="">
+                <img class="wither-heart" src="HUD/wither heart full.png" alt="">
+                <img class="wither-heart" src="HUD/wither heart full.png" alt="">
+                <img class="wither-heart" src="HUD/wither heart full.png" alt="">
+                <img class="wither-heart" src="HUD/wither heart full.png" alt="">
+            </div>
+            <div class="collectible-counter collectible-counter-left" role="img"
+                aria-label="Small Bombs: 0">
+                <img id="smallbomb-counter-image" alt="" aria-hidden="true">
+                <span id="smallbomb-counter-value">0</span>
+            </div>
+            <div class="collectible-counter collectible-counter-right" role="img"
+                aria-label="Rainbows: 0">
+                <img id="rainbow-counter-image" alt="" aria-hidden="true">
+                <span id="rainbow-counter-value">0</span>
+            </div>
+            <section id="crafting-station" class="crafting-station" aria-label="Toaster and ammo crafting"
+                aria-live="polite" hidden>
+                <div class="crafting-ingredients">
+                    <div class="crafting-ingredient">
+                        <img id="craft-smallbomb-image" alt="">
+                        <span id="craft-smallbomb-count">0 / 4</span>
+                    </div>
+                    <span class="crafting-plus" aria-hidden="true">+</span>
+                    <div class="crafting-ingredient">
+                        <img id="craft-rainbow-image" alt="">
+                        <span id="craft-rainbow-count">0 / 4</span>
+                    </div>
+                </div>
+                <p id="craft-instructions">Press E to craft the Toaster with 4 Small Bombs and 4 Rainbows.</p>
+            </section>
+            <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen">
+                Fullscreen
+            </button>
+            <div class="crosshair" aria-hidden="true">
+                <span class="crosshair-line crosshair-top"></span>
+                <span class="crosshair-line crosshair-right"></span>
+                <span class="crosshair-line crosshair-bottom"></span>
+                <span class="crosshair-line crosshair-left"></span>
+                <span class="crosshair-center"></span>
+            </div>
+            <div id="game-message" class="game-message" aria-live="polite" hidden></div>
+            <div id="mystery-box-prompt" class="mystery-box-prompt" hidden>Press E to open the box · 700 Dabloons</div>
+            <div id="game-screen" class="game-screen">
+                <div class="screen-card">
+                    <h2 id="screen-title">Loading terrain</h2>
+                    <p id="screen-description" hidden></p>
+                    <label id="volume-control" class="volume-control" hidden>
+                        <span>Sound volume <output id="volume-value" for="volume-slider">100%</output></span>
+                        <input id="volume-slider" type="range" min="0" max="100" value="100">
+                    </label>
+                    <button id="start-button" type="button" disabled hidden>Loading terrain</button>
+                    <p class="controls-hint" hidden>WASD to move · Space to jump · Q to cycle camera sides · Scroll to zoom · Click to shoot · R to reload · E to interact or open the box · 1-6 to select weapons · F for fullscreen · Esc to pause.</p>
+                </div>
+            </div>
+            <div id="game-error" class="game-error" role="alert" hidden></div>
+            <div id="bomb-flash-overlay" class="bomb-flash-overlay" aria-hidden="true"></div>
+        </section>
+    </main>
+</body>
+</html>

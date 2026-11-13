@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+   <style>
+       .square {
+           width: 350px;
+           height: 300px;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           color: white;
+           font-family: Arial, sans-serif;
+           font-size: 20px;
+           margin: 160px auto;
+           text-align: center;
+           padding: 20px;
+           box-sizing: border-box;
+           white-space: pre-wrap;
+           outline: none;
+           cursor: text;
+       }
+
+       .square:empty::before {
+           content: attr(data-placeholder);
+           color: rgba(255, 255, 255, 0.75);
+       }
+
+       .square:focus {
+           box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+       }
+
+       .red {
+           background-color: rgb(238, 207, 232);
+           transform: translateX(-400px);
+       }
+
+       .green {
+           background-color: rgb(238, 207, 232);
+           transform: translateX(400px);
+       }
+ .purple {
+           background-color: rgb(238, 207, 232);
+           transform: translateX(-400px);
+       }
+ .one {
+           background-color: rgb(238, 207, 232);
+           transform: translateX(400px);
+       }
+
+        .last {
+           background-color: rgb(238, 207, 232);
+           transform: translateX(0px);
+       }
+
+
+       body {
+           position: relative;
+           margin: 0;
+           background-color: rgb(233, 201, 227);
+       }
+
+       .square-area {
+           width: 65%;
+           height: 100%;
+           margin: 0 auto;
+           background-image: url("paper2.avif");
+           background-position: center;
+           background-repeat: no-repeat;
+           background-size: cover;   
+           padding: 1px 0;
+       }
+
+   </style>
+
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>1 year out of many</title>
+    
+    </head>
+    
+ 
+    <body>
+<div class="background-gif" aria-hidden="true"></div>
+<div class="corner-box" aria-hidden="true">
+    <pre class="corner-text-art" aria-live="polite"></pre>
+</div>
+<div class="corner-box corner-box-left" aria-hidden="true">
+    <pre class="corner-text-art corner-text-art-left" aria-live="polite"></pre>
+</div>
+<div class="square-area">
+    <img class="site-pet" src="shimeji/shime1.png" alt="A small cat walking across the page">
+    <div class="overlay-corner-box" aria-hidden="true">
+        <video class="overlay-video" muted playsinline preload="auto">
+            <source src="finaldoor.mp4" type="video/mp4">
+        </video>
+        <canvas class="overlay-video-key"></canvas>
+    </div>
+    <div class="edge top" aria-hidden="true"></div>
+    <div class="edge right" aria-hidden="true"></div>
+    <div class="edge bottom" aria-hidden="true"></div>
+    <div class="edge left" aria-hidden="true"></div>
+    <div class="square red">Its our first full year together Vic! it feels like its been so short, like ive only just started talking to you, and in a way it must be since I can feel that we will be together for the rest of the years to come c:<img class="square-decoration" src="heart1.png" alt=""></div>
+    <div class="square green">I can still the first moments we had together, i knew you were special from the beginning, and believe me when i say that i knew you were mines from the beginning. no doubt about it came through my mind my love.<img class="square-decoration" src="heart1.png" alt=""></div>
+    <div class="square purple">I promise that soon i will be with you soon. i know that the sea has kept us from being together physically but i always felt like we have gotten closer to together as each day passes. I promise it will keep being that way even after the day i die, nothing will keep me from you i fully believe that heart and mind. <img class="square-decoration" src="heart1.png" alt=""></div>
+    <div class="square one">I cherish everything you have done for me, you have made me happier than i thought i could ever be, you have made me feel safer than i thought i could ever be. i dont feel lost anymore, i know where i belong.<img class="square-decoration" src="heart1.png" alt=""></div>
+    <div class="square last">If only you could see the kind person you are, you would know the how amazing you really are. i love how thoughtfull you are, i love how genuine you are too that youre feelings give me meaning to it all. in a way you really do inspire me, the way you genuinly try to make a change for yourself and how of a amazing person has came from it all. this world is cruel and it can hurt but i know it wont matter a bit with you with me. you arent just a girlfriend to me youre everything that i want, everything that i need.<img class="square-decoration" src="heart1.png" alt=""></div>
+</div>
+
+<form class="secret-code-box" id="secret-code-form">
+    <label for="secret-code-input">Enter the secret code</label>
+    <div class="secret-code-controls">
+        <input id="secret-code-input" name="secret-code" type="password" inputmode="numeric" autocomplete="off" required>
+        <button type="submit">Open</button>
+    </div>
+    <p class="secret-code-message" id="secret-code-message" aria-live="polite"></p>
+</form>
+
+<script src="script.js"></script>
+    </body>
+</html>

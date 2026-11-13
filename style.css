@@ -1,0 +1,291 @@
+.square:last-child {
+    width: 1000px;
+    height: 200px;
+    margin-bottom: 0;
+}
+
+.background-gif {
+    position: fixed;
+    inset: 0;
+    background-image: url("stars.gif");
+    background-repeat: repeat;
+    background-size: 800px auto;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.site-pet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    z-index: 2;
+    visibility: hidden;
+    pointer-events: auto;
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+}
+
+.site-pet.is-active {
+    z-index: 4;
+    visibility: visible;
+}
+
+.site-pet.is-dragging {
+    cursor: grabbing;
+}
+
+.corner-box {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 120px;
+    height: 80px;
+    box-sizing: border-box;
+    border: 2px solid #d27caf;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.corner-box-left {
+    right: auto;
+    left: 16px;
+}
+
+.secret-code-box {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 5;
+    width: min(320px, calc(100% - 32px));
+    padding: 12px;
+    box-sizing: border-box;
+    border: 2px solid #d27caf;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #7a3e63;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.secret-code-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.secret-code-controls input {
+    min-width: 0;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #d27caf;
+    border-radius: 5px;
+}
+
+.secret-code-controls button {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 5px;
+    background: #d27caf;
+    color: white;
+    cursor: pointer;
+}
+
+.secret-code-message {
+    min-height: 1em;
+    margin: 6px 0 0;
+    font-size: 13px;
+}
+
+.corner-text-art {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    pointer-events: none;
+}
+
+.corner-text-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    color: #b95d90;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    line-height: 1.1;
+    letter-spacing: 1px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(185, 93, 144, 0.35);
+    animation: waterfallFall 1.6s linear infinite;
+}
+
+.corner-text-art-left .corner-text-frame {
+    box-sizing: border-box;
+    padding-left: 0;
+    left: -4px;
+    font-size: 6.5px;
+    letter-spacing: 0;
+    text-align: left;
+}
+
+@keyframes waterfallFall {
+    0% {
+        transform: translateY(-45px);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(30px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(45px);
+        opacity: 0.65;
+    }
+}
+
+.overlay-corner-box {
+    --overlay-anchor-top: 0px;
+    --overlay-anchor-right: -60px;
+    --overlay-left-size: 450px;
+    --overlay-right-size: 0px;
+    --overlay-top-size: 0px;
+    --overlay-bottom-size: 600px;
+
+    position: absolute;
+    top: calc(var(--overlay-anchor-top) - var(--overlay-top-size));
+    right: calc(var(--overlay-anchor-right) - var(--overlay-right-size));
+    width: calc(var(--overlay-left-size) + var(--overlay-right-size));
+    height: calc(var(--overlay-top-size) + var(--overlay-bottom-size));
+    z-index: 3;
+    cursor: pointer;
+    background-image: url("hole.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 40% auto;
+}
+
+.overlay-video {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    visibility: hidden;
+}
+
+.overlay-video-key {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.square-area {
+    position: relative;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.square {
+    position: relative;
+}
+
+.square-decoration {
+    position: absolute;
+    top: var(--heart-y, 0%);
+    left: var(--heart-x, 100%);
+    right: auto;
+    width: 96px;
+    height: auto;
+    transform: translate(-50%, -50%) rotate(var(--heart-rotation, 0deg));
+    z-index: 2;
+    pointer-events: none;
+}
+
+.square.red {
+    --heart-x: 95%;
+    --heart-y: 5%;
+    --heart-rotation: 9deg;
+}
+
+.square.green {
+    --heart-x: 5%;
+    --heart-y: 5%;
+    --heart-rotation: -12deg;
+}
+
+.square.purple {
+    --heart-x: 95%;
+    --heart-y: 5%;
+    --heart-rotation: 6deg;
+}
+
+.square.one {
+    --heart-x: 95%;
+    --heart-y: 5%;
+    --heart-rotation: -10deg;
+}
+
+.square.last {
+    --heart-x: 95%;
+    --heart-y: 5%;
+    --heart-rotation: 0deg;
+}
+
+.square-area .edge {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.square-area .top,
+.square-area .bottom {
+    left: 36px;
+    width: calc(100% - 72px);
+    height: 36px;
+    background-repeat: repeat-x;
+    background-size: auto 36px;
+}
+
+.square-area .top {
+    top: 0;
+    background-image: url("laceup.png");
+}
+
+.square-area .bottom {
+    bottom: 0;
+    background-image: url("lace2.png");
+}
+
+.square-area .left,
+.square-area .right {
+    top: 0;
+    width: 36px;
+    height: 100%;
+    background-repeat: repeat-y;
+    background-size: 36px auto;
+}
+
+.square-area .left {
+    left: 0;
+    background-image: url("laceleft.png");
+}
+
+.square-area .right {
+    right: 0;
+    background-image: url("laceright.png");
+}
