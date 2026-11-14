@@ -8,7 +8,7 @@ const ROUND_COUNTDOWN_DURATION = 5;
 const SECRET_MESSAGE = "You made it through the dungeon! Put your own secret message here.";
 const MONSTERS_PER_LEVEL = 10;
 const MONSTERS_PER_LEVEL_INCREASE = 2;
-const PLAYER_SPEED = 5;
+const PLAYER_SPEED = 5.5;
 const PLAYER_JUMP_SPEED = 7;
 const PLAYER_GRAVITY = 20;
 const PLAYER_MAX_HEALTH = 100;
@@ -19,9 +19,12 @@ const WITHER_HOMING_CHASE_DURATION = 3;
 const WITHER_HOMING_TURN_RATE = 2.5;
 const WITHER_SHOOT_COOLDOWN = (2.5 / 1.4) * 1.1;
 const WITHER_LEVEL_CREEPER_COUNT = 2;
-const WITHER_CREEPER_SPAWN_DELAY = 2;
-const WITHER_CREEPER_SPAWN_INTERVAL = 2;
+const WITHER_CREEPER_SPAWN_DELAY = 1;
+const WITHER_CREEPER_SPAWN_INTERVAL = 1;
 const SHIELD_SHOP_TARGET_HEIGHT = 3.5 / 3;
+const SHIELD_SHOP_FLOAT_HEIGHT = 1.5;
+const SHIELD_SHOP_FLOAT_AMPLITUDE = 0.12;
+const SHIELD_SHOP_FLOAT_SPEED = 1.5;
 const SHIELD_SHOP_RISE_START = 0.45;
 const SHIELD_SHOP_RISE_DURATION = 2.4;
 const SHIELD_SHOP_CAMERA_MOVE_DURATION = 0.9;
@@ -112,12 +115,12 @@ const SOUND_EFFECTS = {
     witherDeath: { url: new URL("./wither sound affects/Wither_death.mp3", import.meta.url), volume: 0.45 }
 };
 const WEAPON_DEFINITIONS = [
-    { id: "pistol", name: "Pistol", url: new URL("./weapons/pistol.glb", import.meta.url), rotation: [0, Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .5, range: 200, fireRate: 2, starter: true, magazineSize: 12, reserveCapacity: 60, startingReserve: 36, ammoDropAmount: 12, reloadDuration: 1.2 },
-    { id: "shotgun", name: "Shotgun", url: new URL("./weapons/shotgun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .7, range: 150, fireRate: 1, equippedSize: 1.45, pelletCount: 6, spread: 0.18, magazineSize: 6, reserveCapacity: 36, startingReserve: 12, ammoDropAmount: 6, reloadDuration: 1.5 },
-    { id: "sniper", name: "Sniper", url: new URL("./weapons/sniper.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 4, range: 300, fireRate: 0.6, equippedSize: 1.45, magazineSize: 5, reserveCapacity: 25, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.6 },
-    { id: "shuriken", name: "Shuriken", url: new URL("./weapons/shuriken.glb", import.meta.url), rotation: [Math.PI / 2, 0, 0], position: [0.75, 1.1, 0.85], damage: 1, range: 100, fireRate: 2, magazineSize: 5, reserveCapacity: 30, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.1 },
-    { id: "thommy-gun", name: "Thommy Gun", url: new URL("./weapons/thommy gun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .3, range: 120, fireRate: 8, autoFire: true, equippedSize: 1.1, magazineSize: 45, reserveCapacity: 150, startingReserve: 60, ammoDropAmount: 30, reloadDuration: 1.7 },
-    { id: "toaster", name: "Toaster", url: new URL("./weapons/toaster.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 6, range: 120, fireRate: 0.8, equippedSize: 1.2, projectileType: "rocket", magazineSize: 5, reserveCapacity: 20, startingReserve: 8, ammoDropAmount: 4, reloadDuration: 1.5 }
+    { id: "pistol", name: "Pistol", url: new URL("./weapons/pistol.glb", import.meta.url), rotation: [0, Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .5, range: 200, fireRate: 2.34, starter: true, magazineSize: 12, startingReserve: 36, ammoDropAmount: 12, reloadDuration: 1.2 },
+    { id: "shotgun", name: "Shotgun", url: new URL("./weapons/shotgun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .7, range: 150, fireRate: 1, equippedSize: 1.45, pelletCount: 6, spread: 0.18, magazineSize: 6, startingReserve: 12, ammoDropAmount: 6, reloadDuration: 1.5 },
+    { id: "sniper", name: "Sniper", url: new URL("./weapons/sniper.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 4, range: 300, fireRate: 0.6, equippedSize: 1.45, magazineSize: 5, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.6 },
+    { id: "shuriken", name: "Shuriken", url: new URL("./weapons/shuriken.glb", import.meta.url), rotation: [Math.PI / 2, 0, 0], position: [0.75, 1.1, 0.85], damage: 1, range: 100, fireRate: 2, magazineSize: 5, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.1 },
+    { id: "thommy-gun", name: "Thommy Gun", url: new URL("./weapons/thommy gun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .3, range: 120, fireRate: 8, autoFire: true, equippedSize: 1.1, magazineSize: 45, startingReserve: 60, ammoDropAmount: 30, reloadDuration: 1.7 },
+    { id: "toaster", name: "Toaster", url: new URL("./weapons/toaster.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 6, range: 120, fireRate: 1.1, equippedSize: 1.2, projectileType: "rocket", magazineSize: 5, startingReserve: 8, ammoDropAmount: 4, reloadDuration: 1.5 }
 ];
 const AMMO_DROP_WEAPONS = WEAPON_DEFINITIONS.filter((weapon) => weapon.id !== "toaster");
 const MYSTERY_BOX_REWARDS = WEAPON_DEFINITIONS.filter(
@@ -129,30 +132,32 @@ const TREE_SPACING = 10;
 const TREE_SPAWN_CLEARANCE = 14;
 const TREE_MAX_COUNT = 80;
 const PLAYER_SPAWN_OFFSET_X = -12;
-const MYSTERY_BOX_COST = 700;
+const MYSTERY_BOX_COST = 600;
 const MYSTERY_BOX_INTERACTION_DISTANCE = 6;
 const MYSTERY_BOX_TARGET_WIDTH = 3.5;
 const HEALING_SHOP_COST = 500;
 const HEALING_SHOP_HEALTH = 60;
 const AMMO_SHOP_COST = 100;
 const MAGNET_COST = 400;
-const MAGNET_ATTRACTION_RADIUS = 16;
+const MAGNET_ATTRACTION_RADIUS = 18;
 const MAGNET_ATTRACTION_SPEED = 8;
 const TURRET_BASE_COST = 500;
-const TURRET_COST_INCREMENT = 500;
+const TURRET_COST_INCREMENT = 350;
 const TURRET_MAX_COUNT = 4;
 const TURRET_UPGRADE_COST = 1000;
 const TURRET_CROWN_WIDTH_RATIO = 0.66;
 const TURRET_CROWN_BASE_HEIGHT_RATIO = 0.78;
 const TURRET_CROWN_FORWARD_OFFSET_RATIO = 0.055;
-const TURRET_RANGE = 25;
+const TURRET_RANGE = 30;
 const TURRET_BULLET_DAMAGE = 0.3;
+const TURRET_FINAL_LEVEL_DAMAGE = 0.5;
 const TURRET_FIRE_RATE = 9;
 const TURRET_FIRE_INTERVAL = 1 / TURRET_FIRE_RATE;
-const TURRET_UPGRADE_STAT_MULTIPLIER = 1.5;
+const TURRET_UPGRADE_STAT_MULTIPLIER = 2;
 const TURRET_SPREAD = 0.06;
 const TURRET_PLACEMENT_RADIUS = 4.5;
 const TURRET_COLLISION_RADIUS = 0.9;
+const TURRET_INTERACTION_MARGIN = 1.5;
 const TURRET_WEAPON = {
     id: "turret",
     name: "Turret",
@@ -161,6 +166,7 @@ const TURRET_WEAPON = {
 };
 const AMMO_DROP_CHANCE = 0.15;
 const RARE_COLLECTIBLE_DROP_CHANCE = 0.1;
+const TOASTER_COLLECTIBLE_DROP_CHANCE = 0.15;
 const MOB_DROP_SPREAD_RADIUS = 0.55;
 const SHOP_INTERACTION_DISTANCE = 4.5;
 const CRAFTING_STATION_INTERACTION_DISTANCE = 4.5;
@@ -173,9 +179,9 @@ const CREEPER_EXPLOSION_DAMAGE = 25;
 const CREEPER_BOMB_DAMAGE = 25;
 const CREEPER_BOMB_SPAWN_CLEARANCE = 12;
 const BOMB_MAX_HEALTH = 150;
-const BOMB_SHIELD_MAX_HEALTH = 125;
+const BOMB_SHIELD_MAX_HEALTH = 150;
 const BOMB_SHIELD_HEALTH_PER_ICON = 25;
-const BOMB_SHIELD_COST = 1000;
+const BOMB_SHIELD_COST = 500;
 const MONEY_DROP_VALUE = 125;
 const STARTING_DABLOONS = 200;
 const RAINBOW_PARTICLE_COUNT = 48;
@@ -356,7 +362,6 @@ let health = PLAYER_MAX_HEALTH;
 let dabloons = STARTING_DABLOONS;
 let activeMonsters = [];
 let bossCreeperSpawnRemaining = 0;
-let bossCreepersInitialBatchPending = false;
 let isPlaying = false;
 let isPaused = false;
 let isMapReady = false;
@@ -1223,7 +1228,26 @@ async function loadFixedShopModels() {
     ];
     await Promise.all(shopAssets.map(async ([shopType, url]) => {
         try {
-            const gltf = await new GLTFLoader().loadAsync(url.href);
+            const loader = new GLTFLoader();
+            if (shopType === "shield") {
+                loader.register((parser) => ({
+                    name: "KHR_materials_pbrSpecularGlossiness",
+                    beforeRoot() {
+                        for (const material of parser.json.materials ?? []) {
+                            const legacy = material.extensions?.KHR_materials_pbrSpecularGlossiness;
+                            if (!legacy || material.pbrMetallicRoughness) continue;
+                            // Approximate this legacy material with a supported glTF material.
+                            material.pbrMetallicRoughness = {
+                                baseColorFactor: legacy.diffuseFactor ?? [1, 1, 1, 1],
+                                baseColorTexture: legacy.diffuseTexture,
+                                metallicFactor: 0,
+                                roughnessFactor: 1 - (legacy.glossinessFactor ?? 1)
+                            };
+                        }
+                    }
+                }));
+            }
+            const gltf = await loader.loadAsync(url.href);
             const bounds = new THREE.Box3().setFromObject(gltf.scene);
             const size = bounds.getSize(new THREE.Vector3());
             if (!Number.isFinite(size.y) || size.y <= 0) {
@@ -1231,7 +1255,7 @@ async function loadFixedShopModels() {
             }
             prepareModel(gltf.scene);
             if (shopType === "turret") illuminateTurretShopCrown(gltf.scene);
-            if (shopType === "magnet") illuminateMagnetModel(gltf.scene);
+            if (shopType === "magnet" || shopType === "shield") illuminateTexturedModel(gltf.scene);
             shopTemplates.set(shopType, gltf.scene);
         } catch (error) {
             console.error(`Unable to load the ${shopType} shop at ${url.href}.`, error);
@@ -1270,8 +1294,8 @@ function illuminateTurretShopCrown(shopModel) {
     if (!crownMeshFound) console.warn("The turret shop crown has no mesh to illuminate.");
 }
 
-function illuminateMagnetModel(magnetModel) {
-    magnetModel.traverse((part) => {
+function illuminateTexturedModel(model) {
+    model.traverse((part) => {
         if (!part.isMesh) return;
         const sourceMaterials = Array.isArray(part.material) ? part.material : [part.material];
         const materials = sourceMaterials.map((sourceMaterial) => {
@@ -1433,12 +1457,14 @@ function createShieldShop() {
         -center.z * scale
     );
 
-    const riseHeight = SHIELD_SHOP_TARGET_HEIGHT + 1;
+    const hoverHeight = placement.height + SHIELD_SHOP_FLOAT_HEIGHT;
+    const riseHeight = SHIELD_SHOP_TARGET_HEIGHT + 1 + SHIELD_SHOP_FLOAT_HEIGHT;
     const object = new THREE.Group();
-    object.position.set(placement.x, placement.height - riseHeight, placement.z);
+    object.position.set(placement.x, hoverHeight - riseHeight, placement.z);
     object.rotation.y = Math.PI / 2;
-    object.userData.groundHeight = placement.height;
+    object.userData.hoverHeight = hoverHeight;
     object.userData.riseHeight = riseHeight;
+    object.userData.floatTime = 0;
     object.add(model);
     shopObjects.add(object);
     shieldShopObject = object;
@@ -1470,13 +1496,13 @@ function beginShieldShopIntro() {
     const cameraStartTarget = playerPosition.clone();
     cameraStartTarget.y += PLAYER_HEAD_HEIGHT;
     const focusTarget = shop.position.clone();
-    focusTarget.y += SHIELD_SHOP_TARGET_HEIGHT * 0.55;
-    const cameraFocusPosition = shop.position.clone().add(new THREE.Vector3(7, 5, 7));
+    focusTarget.y += SHIELD_SHOP_FLOAT_HEIGHT + SHIELD_SHOP_TARGET_HEIGHT * 0.55;
+    const cameraFocusPosition = shop.position.clone().add(new THREE.Vector3(7, 5 + SHIELD_SHOP_FLOAT_HEIGHT, 7));
     const cameraReturnStart = SHIELD_SHOP_RISE_START + SHIELD_SHOP_RISE_DURATION;
     shieldShopIntro = {
         elapsed: 0,
         object: shieldShopObject,
-        groundHeight: shieldShopObject.userData.groundHeight,
+        hoverHeight: shieldShopObject.userData.hoverHeight,
         riseHeight: shieldShopObject.userData.riseHeight,
         cameraStartPosition: camera.position.clone(),
         cameraStartTarget,
@@ -1499,7 +1525,7 @@ function updateShieldShopIntro(delta) {
         SHIELD_SHOP_RISE_START,
         SHIELD_SHOP_RISE_START + SHIELD_SHOP_RISE_DURATION
     );
-    intro.object.position.y = intro.groundHeight - intro.riseHeight * (1 - riseProgress);
+    intro.object.position.y = intro.hoverHeight - intro.riseHeight * (1 - riseProgress);
 
     camera.up.set(0, 1, 0);
     if (intro.elapsed < intro.cameraReturnStart) {
@@ -1529,10 +1555,17 @@ function updateShieldShopIntro(delta) {
     }
 
     if (intro.elapsed < intro.duration) return;
-    intro.object.position.y = intro.groundHeight;
+    intro.object.position.y = intro.hoverHeight;
     shieldShopIntro = null;
     updateCamera();
     startWitherBossLevel();
+}
+
+function updateShieldShopHover(delta) {
+    if (!shieldShopObject || !isPlaying || isPaused) return;
+    shieldShopObject.userData.floatTime += delta;
+    shieldShopObject.position.y = shieldShopObject.userData.hoverHeight +
+        Math.sin(shieldShopObject.userData.floatTime * SHIELD_SHOP_FLOAT_SPEED) * SHIELD_SHOP_FLOAT_AMPLITUDE;
 }
 
 function getNextTurretCost() {
@@ -2145,12 +2178,21 @@ function findNearbyTurret() {
             playerPosition.z - turret.object.position.z
         );
         if (
-            distance <= turret.collisionRadius + 0.75 &&
+            distance <= turret.collisionRadius + TURRET_INTERACTION_MARGIN &&
             distance < nearestDistance
         ) {
             nearbyTurret = turret;
             nearestDistance = distance;
         }
+    }
+    if (nearbyTurret && isNearBombShieldPurchase()) {
+        const shieldShop = shopPlacements.find((shop) => shop.type === "shield");
+        const shieldPosition = shieldShop?.position ?? bombPosition;
+        const shieldDistance = Math.hypot(
+            playerPosition.x - shieldPosition.x,
+            playerPosition.z - shieldPosition.z
+        );
+        if (shieldDistance < nearestDistance) return null;
     }
     return nearbyTurret;
 }
@@ -2281,10 +2323,6 @@ async function tryCraftToaster() {
 
     if (ownedWeaponIds.has("toaster")) {
         const ammo = getWeaponAmmo(weapon);
-        if (weapon.reserveCapacity - ammo.reserve < TOASTER_AMMO_CRAFT_AMOUNT) {
-            showMessage(`Make room for ${TOASTER_AMMO_CRAFT_AMOUNT} Toaster reserve ammo first.`);
-            return true;
-        }
         if (
             rareDropCounts.smallbomb < TOASTER_AMMO_RECIPE_AMOUNT ||
             rareDropCounts.rainbow < TOASTER_AMMO_RECIPE_AMOUNT
@@ -2399,19 +2437,12 @@ function tryPurchaseFromShop() {
         return true;
     }
     const ammo = getWeaponAmmo(weapon);
-    if (ammo.reserve >= weapon.reserveCapacity) {
-        showMessage("Reserve ammo is already full.");
-        return true;
-    }
     if (dabloons < AMMO_SHOP_COST) {
         showMessage(`Ammo costs ${AMMO_SHOP_COST} Dabloons.`);
         return true;
     }
 
-    const reserveAmmoAdded = Math.min(
-        weapon.magazineSize,
-        weapon.reserveCapacity - ammo.reserve
-    );
+    const reserveAmmoAdded = weapon.magazineSize;
     dabloons -= AMMO_SHOP_COST;
     ammo.reserve += reserveAmmoAdded;
     updateHud();
@@ -2425,7 +2456,7 @@ function unlockWeapon(weapon) {
     const ammo = getWeaponAmmo(weapon);
     if (!wasOwned) {
         if (ammo.magazine === 0) ammo.magazine = weapon.magazineSize;
-        ammo.reserve = Math.min(weapon.reserveCapacity, ammo.reserve + weapon.startingReserve);
+        ammo.reserve += weapon.startingReserve;
     }
     cacheWeaponThumbnail(weapon);
     updateWeaponQuickSelect();
@@ -3213,7 +3244,6 @@ function startWitherBossLevel() {
     boss.userData.idleSoundCooldown = THREE.MathUtils.randFloat(2, 5);
     boss.position.y = 3.5;
     bossCreeperSpawnRemaining = WITHER_CREEPER_SPAWN_DELAY;
-    bossCreepersInitialBatchPending = true;
     updateHud();
     showMessage(`The Wither has arrived! Creepers arrive in ${WITHER_CREEPER_SPAWN_DELAY} seconds.`);
 }
@@ -3496,9 +3526,7 @@ function updateAmmoDrops(delta) {
             continue;
         }
         const ammo = getWeaponAmmo(weapon);
-        const availableSpace = weapon.reserveCapacity - ammo.reserve;
-        if (availableSpace <= 0) continue;
-        const rounds = Math.min(weapon.ammoDropAmount, availableSpace);
+        const rounds = weapon.ammoDropAmount;
         ammo.reserve += rounds;
         scene.remove(drop);
         ammoDrops.splice(index, 1);
@@ -3570,7 +3598,10 @@ function findMobDropPlacement(monster) {
 }
 
 function spawnRareCollectibleDrop(monster) {
-    if (Math.random() >= RARE_COLLECTIBLE_DROP_CHANCE) return;
+    const dropChance = ownedWeaponIds.has("toaster")
+        ? TOASTER_COLLECTIBLE_DROP_CHANCE
+        : RARE_COLLECTIBLE_DROP_CHANCE;
+    if (Math.random() >= dropChance) return;
     const dropType = Math.random() < 0.5 ? "smallbomb" : "rainbow";
     const template = rareDropTemplates.get(dropType);
     if (!template) return;
@@ -3931,7 +3962,6 @@ function clearHostileProjectiles() {
 function finishLevel() {
     if (level === LEVEL_COUNT) {
         bossCreeperSpawnRemaining = 0;
-        bossCreepersInitialBatchPending = false;
         roundIntermissionRemaining = null;
         roundCountdownDisplay.hidden = true;
         isPlaying = false;
@@ -4071,7 +4101,6 @@ function showMessage(message) {
 
 function clearMonsters() {
     bossCreeperSpawnRemaining = 0;
-    bossCreepersInitialBatchPending = false;
     clearProjectiles();
     clearHostileProjectiles();
     stopWitherIdleSounds();
@@ -4089,12 +4118,12 @@ function onKeyDown(event) {
         reloadCurrentWeapon();
     }
     if (event.code === "KeyE" && !event.repeat && isPlaying && !isPaused) {
+        if (tryUpgradeNearbyTurret()) return;
         if (isNearCraftingTable()) {
             void tryCraftToaster();
             return;
         }
         if (tryPurchaseBombShield()) return;
-        if (tryUpgradeNearbyTurret()) return;
         if (tryPurchaseFromShop()) return;
         tryOpenMysteryBox();
     }
@@ -4238,10 +4267,16 @@ function movePlayer(delta) {
     const nearBombShield = isNearBombShieldPurchase();
     const nearCraftingTable = isNearCraftingTable();
     const nearMysteryBox = isNearMysteryBox();
-    craftingStation.hidden = !nearCraftingTable;
+    craftingStation.hidden = !nearCraftingTable || Boolean(nearbyTurret);
     mysteryBoxPrompt.hidden =
         !nearbyShop && !nearbyTurret && !nearBombShield && !nearMysteryBox;
-    if (nearBombShield) {
+    if (nearbyTurret) {
+        mysteryBoxPrompt.textContent = !turretCrownTemplate
+            ? "Turret upgrades unavailable"
+            : nearbyTurret.upgraded
+                ? "Turret already upgraded"
+                : `Press E to upgrade turret · ${TURRET_UPGRADE_COST} Dabloons`;
+    } else if (nearBombShield) {
         mysteryBoxPrompt.textContent = bombShieldPurchased
             ? "Bomb shield already purchased"
             : bombHealth <= 0 || !bombObject?.visible
@@ -4249,12 +4284,6 @@ function movePlayer(delta) {
                 : !bombShieldTemplate
                     ? "Bomb shield unavailable"
                     : `Press E to buy bomb shield · ${BOMB_SHIELD_COST} Dabloons`;
-    } else if (nearbyTurret) {
-        mysteryBoxPrompt.textContent = !turretCrownTemplate
-            ? "Turret upgrades unavailable"
-            : nearbyTurret.upgraded
-                ? "Turret already upgraded"
-                : `Press E to upgrade turret · ${TURRET_UPGRADE_COST} Dabloons`;
     } else if (nearbyShop?.type === "magnet") {
         mysteryBoxPrompt.textContent = magnetPurchased
             ? "Magnet purchased · nearby mob drops are attracted"
@@ -4269,7 +4298,7 @@ function movePlayer(delta) {
         const weapon = WEAPON_DEFINITIONS.find((definition) => definition.id === currentWeaponId);
         mysteryBoxPrompt.textContent = weapon?.id === "toaster"
             ? "Toaster ammo must be crafted at the crafting table"
-            : `Press E for up to ${weapon?.magazineSize ?? 0} ${weapon?.name ?? "weapon"} reserve ammo · ${AMMO_SHOP_COST} Dabloons`;
+            : `Press E for ${weapon?.magazineSize ?? 0} ${weapon?.name ?? "weapon"} reserve ammo · ${AMMO_SHOP_COST} Dabloons`;
     } else if (nearMysteryBox) {
         mysteryBoxPrompt.textContent = `Press E to open · ${MYSTERY_BOX_COST} Dabloons · Weapon roulette`;
     } else {
@@ -4428,15 +4457,12 @@ function updateBossCreeperSpawn(delta) {
         !activeMonsters.some((monster) => monster.userData.isBoss)
     ) {
         bossCreeperSpawnRemaining = 0;
-        bossCreepersInitialBatchPending = false;
         return;
     }
 
     bossCreeperSpawnRemaining = Math.max(0, bossCreeperSpawnRemaining - delta);
     if (bossCreeperSpawnRemaining > 0) return;
-    const spawnCount = bossCreepersInitialBatchPending ? WITHER_LEVEL_CREEPER_COUNT : 1;
-    bossCreepersInitialBatchPending = false;
-    for (let index = 0; index < spawnCount; index += 1) {
+    for (let index = 0; index < WITHER_LEVEL_CREEPER_COUNT; index += 1) {
         createMonster(undefined, "Minecraft Creeper");
     }
     bossCreeperSpawnRemaining = WITHER_CREEPER_SPAWN_INTERVAL;
@@ -4491,8 +4517,11 @@ function updateTurrets(delta) {
             .addScaledVector(spreadRight, THREE.MathUtils.randFloatSpread(TURRET_SPREAD))
             .addScaledVector(spreadVertical, THREE.MathUtils.randFloatSpread(TURRET_SPREAD))
             .normalize();
-        const weapon = turret.upgraded
-            ? { ...TURRET_WEAPON, damage: TURRET_WEAPON.damage * statMultiplier }
+        const weapon = turret.upgraded || level === LEVEL_COUNT
+            ? {
+                ...TURRET_WEAPON,
+                damage: (level === LEVEL_COUNT ? TURRET_FINAL_LEVEL_DAMAGE : TURRET_BULLET_DAMAGE) * statMultiplier
+            }
             : TURRET_WEAPON;
         createWeaponProjectile(weapon, origin, projectileDirection);
         if (turret.fireActions.length) {
@@ -4831,7 +4860,6 @@ function updateProceduralMonsterWalk(monster, delta, isWalking) {
 
 function endGame() {
     bossCreeperSpawnRemaining = 0;
-    bossCreepersInitialBatchPending = false;
     isPlaying = false;
     mysteryBoxPrompt.hidden = true;
     volumeControl.hidden = true;
@@ -4859,6 +4887,7 @@ function render() {
         return;
     }
     const simulationDelta = delta * getBombExplosionTimeScale();
+    updateShieldShopHover(simulationDelta);
     updateWeaponFire(simulationDelta);
     updateAmmoReload(simulationDelta);
     updateIntroCamera(simulationDelta);
