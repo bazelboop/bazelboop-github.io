@@ -18,7 +18,7 @@ const WITHER_HOMING_HEALTH_THRESHOLD = 2 * WITHER_HEALTH_PER_HEART;
 const WITHER_HOMING_CHASE_DURATION = 3;
 const WITHER_HOMING_TURN_RATE = 2.5;
 const WITHER_SHOOT_COOLDOWN = (2.5 / 1.4) * 1.1;
-const WITHER_LEVEL_CREEPER_COUNT = 2;
+const WITHER_LEVEL_CREEPER_COUNT = 1;
 const WITHER_CREEPER_SPAWN_DELAY = 1;
 const WITHER_CREEPER_SPAWN_INTERVAL = 1;
 const SHIELD_SHOP_TARGET_HEIGHT = 3.5 / 3;
@@ -202,6 +202,7 @@ const gameScreen = document.querySelector("#game-screen");
 const screenTitle = document.querySelector("#screen-title");
 const screenDescription = document.querySelector("#screen-description");
 const startButton = document.querySelector("#start-button");
+const skipToLastLevelButton = document.querySelector("#skip-to-last-level-button");
 const volumeControl = document.querySelector("#volume-control");
 const volumeSlider = document.querySelector("#volume-slider");
 const volumeValue = document.querySelector("#volume-value");
@@ -537,6 +538,7 @@ function initializeScene() {
     document.addEventListener("pointerup", onGamePointerUp);
     frame.addEventListener("wheel", onCameraZoom, { passive: false });
     startButton.addEventListener("click", onStartButtonClick);
+    skipToLastLevelButton.addEventListener("click", onSkipToLastLevelClick);
     fullscreenButton.addEventListener("click", toggleFullscreen);
     document.addEventListener("fullscreenchange", updateFullscreenButton);
     volumeSlider.addEventListener("input", onVolumeChange);
@@ -617,6 +619,23 @@ function onStartButtonClick(event) {
     }
     startButton.textContent = "Enter the dungeon";
     startGame();
+}
+
+async function onSkipToLastLevelClick(event) {
+    event.stopPropagation();
+    if (!isMapReady || isPaused) return;
+    startButton.disabled = true;
+    skipToLastLevelButton.disabled = true;
+    try {
+        await loadWeaponModel("toaster");
+        startGame(true);
+    } catch (error) {
+        console.error("Unable to start the final-level test.", error);
+        screenDescription.textContent = "Could not load the Toaster for the final-level test.";
+    } finally {
+        startButton.disabled = false;
+        skipToLastLevelButton.disabled = false;
+    }
 }
 
 function addWall(x, y, z, width, height, depth, material) {
@@ -742,6 +761,8 @@ function enableGameStart() {
     screenDescription.textContent = `Clear all ${LEVEL_COUNT} levels`;
     startButton.disabled = false;
     startButton.textContent = "Defend the bomb stay alive!";
+    skipToLastLevelButton.hidden = false;
+    skipToLastLevelButton.disabled = false;
 }
 
 function getMeshBounds(meshes) {
@@ -3172,31 +3193,34 @@ function createPlaceholderMonster() {
     return monster;
 }
 
-function startGame() {
+function startGame(skipToLastLevel = false) {
     clearBombExplosionWave();
     removeShieldShop();
     clearTurrets();
     roundIntermissionRemaining = null;
     roundCountdownDisplay.hidden = true;
     roundCountdownDisplay.textContent = "";
-    gameScreen.hidden = true;
-    volumeControl.hidden = true;
-    isPlaying = true;
+    isPlaying = false;
     isPaused = false;
     isTommyGunTriggerHeld = false;
     stopSound("tommyGun");
     ownedWeaponIds.clear();
     ownedWeaponIds.add("pistol");
-    currentWeaponId = "pistol";
+    if (skipToLastLevel) ownedWeaponIds.add("toaster");
+    currentWeaponId = skipToLastLevel ? "toaster" : "pistol";
     health = PLAYER_MAX_HEALTH;
     dabloons = STARTING_DABLOONS;
     clearAmmoDrops();
     clearRareDrops();
     resetWeaponAmmo();
+    if (skipToLastLevel) {
+        const toaster = WEAPON_DEFINITIONS.find((weapon) => weapon.id === "toaster");
+        getWeaponAmmo(toaster).reserve = 30;
+    }
     equipCurrentWeapon();
     updateWeaponQuickSelect();
     weaponFireCooldown = 0;
-    level = 1;
+    level = skipToLastLevel ? LEVEL_COUNT : 1;
     playerYaw = 0;
     cameraYaw = 0;
     cameraSideIndex = 0;
@@ -3209,6 +3233,21 @@ function startGame() {
     bombShieldObject = null;
     resetPlayerPosition();
     placeBomb();
+    if (skipToLastLevel) {
+        for (let index = 0; index < TURRET_MAX_COUNT; index += 1) {
+            if (!createTurret() || !attachTurretCrown(turretInstances[turretInstances.length - 1])) {
+                clearTurrets();
+                console.error("Could not set up four upgraded turrets for the final-level test.");
+                screenDescription.textContent = "Could not set up four upgraded turrets for the final-level test.";
+                return;
+            }
+            turretInstances[turretInstances.length - 1].upgraded = true;
+        }
+    }
+    gameScreen.hidden = true;
+    volumeControl.hidden = true;
+    skipToLastLevelButton.hidden = true;
+    isPlaying = true;
     updateHud();
     clearMonsters();
     startLevel();
@@ -3968,6 +4007,7 @@ function finishLevel() {
         screenTitle.textContent = "The Wither is defeated!";
         screenDescription.textContent = SECRET_MESSAGE;
         startButton.textContent = "Play again";
+        skipToLastLevelButton.hidden = false;
         gameScreen.hidden = false;
         return;
     }
@@ -4867,6 +4907,7 @@ function endGame() {
     screenTitle.textContent = "game over D:";
     screenDescription.textContent = "";
     startButton.textContent = "Try again";
+    skipToLastLevelButton.hidden = false;
     gameScreen.hidden = false;
 }
 
