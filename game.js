@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { clone as cloneSkinnedModel } from "three/addons/utils/SkeletonUtils.js";
 
-const LEVEL_COUNT = 6;
+const LEVEL_COUNT = 8;
 const ROUND_INTERMISSION_DURATION = 25;
 const ROUND_COUNTDOWN_DURATION = 5;
 const SECRET_MESSAGE = "You made it through the dungeon! Put your own secret message here.";
@@ -21,7 +21,7 @@ const WITHER_SHOOT_COOLDOWN = (2.5 / 1.4) * 1.1;
 const WITHER_LEVEL_CREEPER_COUNT = 2;
 const WITHER_CREEPER_SPAWN_DELAY = 2;
 const WITHER_CREEPER_SPAWN_INTERVAL = 2;
-const SHIELD_SHOP_TARGET_HEIGHT = 3.5;
+const SHIELD_SHOP_TARGET_HEIGHT = 3.5 / 3;
 const SHIELD_SHOP_RISE_START = 0.45;
 const SHIELD_SHOP_RISE_DURATION = 2.4;
 const SHIELD_SHOP_CAMERA_MOVE_DURATION = 0.9;
@@ -116,7 +116,7 @@ const WEAPON_DEFINITIONS = [
     { id: "shotgun", name: "Shotgun", url: new URL("./weapons/shotgun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .7, range: 150, fireRate: 1, equippedSize: 1.45, pelletCount: 6, spread: 0.18, magazineSize: 6, reserveCapacity: 36, startingReserve: 12, ammoDropAmount: 6, reloadDuration: 1.5 },
     { id: "sniper", name: "Sniper", url: new URL("./weapons/sniper.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 4, range: 300, fireRate: 0.6, equippedSize: 1.45, magazineSize: 5, reserveCapacity: 25, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.6 },
     { id: "shuriken", name: "Shuriken", url: new URL("./weapons/shuriken.glb", import.meta.url), rotation: [Math.PI / 2, 0, 0], position: [0.75, 1.1, 0.85], damage: 1, range: 100, fireRate: 2, magazineSize: 5, reserveCapacity: 30, startingReserve: 10, ammoDropAmount: 5, reloadDuration: 1.1 },
-    { id: "thommy-gun", name: "Thommy Gun", url: new URL("./weapons/thommy gun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .3, range: 120, fireRate: 8, autoFire: true, equippedSize: 1.1, magazineSize: 30, reserveCapacity: 150, startingReserve: 60, ammoDropAmount: 30, reloadDuration: 1.7 },
+    { id: "thommy-gun", name: "Thommy Gun", url: new URL("./weapons/thommy gun.glb", import.meta.url), rotation: [0, -Math.PI / 2, 0], position: [0.75, 1.1, 1.05], damage: .3, range: 120, fireRate: 8, autoFire: true, equippedSize: 1.1, magazineSize: 45, reserveCapacity: 150, startingReserve: 60, ammoDropAmount: 30, reloadDuration: 1.7 },
     { id: "toaster", name: "Toaster", url: new URL("./weapons/toaster.glb", import.meta.url), rotation: [0, 0, 0], position: [0.75, 1.1, 1.05], damage: 6, range: 120, fireRate: 0.8, equippedSize: 1.2, projectileType: "rocket", magazineSize: 5, reserveCapacity: 20, startingReserve: 8, ammoDropAmount: 4, reloadDuration: 1.5 }
 ];
 const AMMO_DROP_WEAPONS = WEAPON_DEFINITIONS.filter((weapon) => weapon.id !== "toaster");
@@ -176,7 +176,7 @@ const BOMB_MAX_HEALTH = 150;
 const BOMB_SHIELD_MAX_HEALTH = 125;
 const BOMB_SHIELD_HEALTH_PER_ICON = 25;
 const BOMB_SHIELD_COST = 1000;
-const MONEY_DROP_VALUE = 100;
+const MONEY_DROP_VALUE = 125;
 const STARTING_DABLOONS = 200;
 const RAINBOW_PARTICLE_COUNT = 48;
 const RAINBOW_PARTICLE_LIFETIME = 0.85;
@@ -221,6 +221,7 @@ const dabloonDisplay = document.querySelector("#dabloon-display");
 const dabloonValueDisplay = document.querySelector("#dabloon-value");
 const ammoDisplay = document.querySelector("#ammo-display");
 const ammoValueDisplay = document.querySelector("#ammo-value");
+const mobCounter = document.querySelector("#mob-counter");
 const smallbombCounter = document.querySelector(".collectible-counter-left");
 const smallbombCounterImage = document.querySelector("#smallbomb-counter-image");
 const smallbombCounterValue = document.querySelector("#smallbomb-counter-value");
@@ -1413,7 +1414,7 @@ function createShieldShop() {
 
     const scale = SHIELD_SHOP_TARGET_HEIGHT / size.y;
     const collisionRadius = Math.max(
-        1.5,
+        0.5,
         Math.max(size.x, size.z) * scale * 0.45
     );
     const placement = findShieldShopPlacement(collisionRadius);
@@ -2932,6 +2933,7 @@ function createMonster(position, requestedVariantName) {
     });
     scene.add(monster);
     activeMonsters.push(monster);
+    updateMobCounter();
 }
 
 function spawnWitherSkeletons(boss, count = 4) {
@@ -3430,6 +3432,7 @@ function damageMonster(monster, damage) {
         scene.remove(monster);
         if (monster.userData.mixer) actorMixers.delete(monster.userData.mixer);
         activeMonsters = activeMonsters.filter((active) => active !== monster);
+        updateMobCounter();
         updateHud();
         if (activeMonsters.length === 0) finishLevel();
     } else {
@@ -3970,6 +3973,10 @@ function updateRoundIntermission(delta) {
     startLevel();
 }
 
+function updateMobCounter() {
+    mobCounter.textContent = `Mobs: ${activeMonsters.length}`;
+}
+
 function updateHud() {
     levelDisplay.textContent = `Level ${level}`;
     const fullHeartCount = Math.ceil(health / 20);
@@ -4073,6 +4080,7 @@ function clearMonsters() {
         if (monster.userData.mixer) actorMixers.delete(monster.userData.mixer);
     }
     activeMonsters = [];
+    updateMobCounter();
 }
 
 function onKeyDown(event) {
@@ -4775,6 +4783,7 @@ function explodeCreeper(creeper, damagesBomb = false) {
     if (creeper.userData.mixer) actorMixers.delete(creeper.userData.mixer);
     scene.remove(creeper);
     activeMonsters = activeMonsters.filter((monster) => monster !== creeper);
+    updateMobCounter();
     if (damagesBomb && bombHealth > 0) {
         if (bombShieldHealth > 0) {
             bombShieldHealth = Math.max(0, bombShieldHealth - CREEPER_BOMB_DAMAGE);

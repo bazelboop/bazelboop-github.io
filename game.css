@@ -236,13 +236,20 @@ body {
     pointer-events: none;
 }
 
-.hud > span {
+.hud > span,
+.mob-counter {
     padding: 8px 11px;
     border: 1px solid rgba(236, 201, 228, 0.35);
     border-radius: 999px;
     background: rgba(15, 12, 24, 0.78);
     color: #f8e7f2;
     font: 600 14px Arial, sans-serif;
+}
+
+.ammo-mob-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .hud > .round-countdown {
