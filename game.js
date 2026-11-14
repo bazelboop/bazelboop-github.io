@@ -5,7 +5,6 @@ import { clone as cloneSkinnedModel } from "three/addons/utils/SkeletonUtils.js"
 const LEVEL_COUNT = 8;
 const ROUND_INTERMISSION_DURATION = 25;
 const ROUND_COUNTDOWN_DURATION = 5;
-const SECRET_MESSAGE = "You made it through the dungeon! Put your own secret message here.";
 const MONSTERS_PER_LEVEL = 10;
 const MONSTERS_PER_LEVEL_INCREASE = 2;
 const PLAYER_SPEED = 5.5;
@@ -20,7 +19,7 @@ const WITHER_HOMING_TURN_RATE = 2.5;
 const WITHER_SHOOT_COOLDOWN = (2.5 / 1.4) * 1.1;
 const WITHER_LEVEL_CREEPER_COUNT = 1;
 const WITHER_CREEPER_SPAWN_DELAY = 1;
-const WITHER_CREEPER_SPAWN_INTERVAL = 1;
+const WITHER_CREEPER_SPAWN_INTERVAL = 0.2;
 const SHIELD_SHOP_TARGET_HEIGHT = 3.5 / 3;
 const SHIELD_SHOP_FLOAT_HEIGHT = 1.5;
 const SHIELD_SHOP_FLOAT_AMPLITUDE = 0.12;
@@ -2955,10 +2954,13 @@ function createMonster(position, requestedVariantName) {
         ? 8
         : requestedVariantName === "Wither"
             ? WITHER_MAX_HEALTH
-            : 2 + Math.floor(level / 2);
+            : requestedVariantName === "Minecraft Creeper" && level === LEVEL_COUNT
+                ? 1
+                : 2 + Math.floor(level / 2);
     monster.userData.speed = requestedVariantName === "Wither Skeleton"
         ? 4.3
-        : BASE_MONSTER_SPEED * MONSTER_LEVEL_SPEED_MULTIPLIER ** (level - 1);
+        : BASE_MONSTER_SPEED * MONSTER_LEVEL_SPEED_MULTIPLIER ** (level - 1) *
+            (requestedVariantName === "Minecraft Creeper" && level === LEVEL_COUNT ? 1.1 : 1);
     monster.userData.variantName = requestedVariantName ?? variant?.name ?? "Placeholder";
     monster.userData.isBoss = Boolean(variant?.isBoss) || requestedVariantName === "Wither";
     monster.userData.facingOffset = variant?.facingOffset ?? 0;
@@ -4005,7 +4007,7 @@ function finishLevel() {
         roundCountdownDisplay.hidden = true;
         isPlaying = false;
         screenTitle.textContent = "The Wither is defeated!";
-        screenDescription.textContent = SECRET_MESSAGE;
+        screenDescription.textContent = "";
         startButton.textContent = "Play again";
         skipToLastLevelButton.hidden = false;
         gameScreen.hidden = false;
